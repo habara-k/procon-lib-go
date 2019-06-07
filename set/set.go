@@ -4,42 +4,42 @@ import (
 	"fmt"
 )
 
-
 type Comparable interface {
 	less(Comparable) bool
 }
 
-
 type Node struct {
-	elem Comparable
+	elem             Comparable
 	par, left, right *Node
 }
 
 func NewNode(elem Comparable, par *Node) *Node {
-    node := new(Node)
+	node := new(Node)
 	node.elem = elem
 	node.par = par
-    return node
+	return node
 }
 
-func (node *Node) insert(elem Comparable, par *Node) *Node {
+func (node *Node) insert(elem Comparable, par *Node) bool {
 	// fmt.Println("Node::insert is called")
 	if node == nil {
 		node = NewNode(elem, par)
-		if par == nil { return node }
-		if par.elem.less(elem) {
-			par.right = node
-		} else {
-			par.left = node
+		if par != nil {
+			if par.elem.less(elem) {
+				par.right = node
+			} else {
+				par.left = node
+			}
 		}
-		return node
+		return true
 	}
 	if node.elem.less(elem) {
-		node.right.insert(elem, node)
+		return node.right.insert(elem, node)
 	} else if elem.less(node.elem) {
-		node.left.insert(elem, node)
+		return node.left.insert(elem, node)
+	} else {
+		return false
 	}
-	return node
 }
 
 func (node *Node) find(elem Comparable) *Node {
@@ -117,8 +117,12 @@ func (node *Node) next() *Node {
 	} else {
 		n := node
 		for {
-			if n.par == nil { return nil }
-			if n.elem.less(n.par.elem) { return n.par }
+			if n.par == nil {
+				return nil
+			}
+			if n.elem.less(n.par.elem) {
+				return n.par
+			}
 			n = n.par
 		}
 	}
@@ -133,29 +137,40 @@ func (node *Node) show() {
 	node.right.show()
 }
 
-
 type Set struct {
+	size uint
 	root *Node
 }
 
 func (set *Set) insert(elem Comparable) {
-	fmt.Println("Set::insert is called")
-	set.root = set.root.insert(elem, nil)
+	// fmt.Println("Set::insert is called")
+	if set.root == nil {
+		set.root = NewNode(elem, nil)
+		set.size++
+	} else {
+		if set.root.insert(elem, nil) {
+			set.size++
+		}
+	}
 }
 
 func (set *Set) find(elem Comparable) *Node {
-	fmt.Println("Set::find is called")
+	// fmt.Println("Set::find is called")
 	return set.root.find(elem)
 }
 
 func (set *Set) erase(elem Comparable) {
-	fmt.Println("Set::erase is called")
+	// fmt.Println("Set::erase is called")
 	node := set.root.find(elem)
+	if node == nil {
+		return
+	}
 	if node == set.root {
 		set.root = nil
 	} else {
 		node.erase()
 	}
+	set.size--
 }
 
 func (set *Set) begin() *Node {
@@ -166,16 +181,15 @@ func (set *Set) show() {
 	set.root.show()
 }
 
-
 type Int int
+
 func (item Int) less(other Comparable) bool {
 	otherT, ok := other.(Int)
-    if !ok{
-        //handle error (other was not of type T)
-    }
+	if !ok {
+		//handle error (other was not of type T)
+	}
 	return item < otherT
 }
-
 
 func main() {
 	set := new(Set)
@@ -186,10 +200,12 @@ func main() {
 	set.erase(Int(3))
 	set.show()
 
-	for i := 0; i < 8; i++ {
-		set.insert(Int(i))
+	list := []int{4, 6, 3}
+	for _, v := range list {
+		set.insert(Int(v))
 	}
 	set.show()
+	fmt.Println("set.size:", set.size)
 
 	fmt.Println(set.find(Int(2)))
 	fmt.Println(set.find(Int(10)))
@@ -198,4 +214,3 @@ func main() {
 		fmt.Println(it.elem)
 	}
 }
-
