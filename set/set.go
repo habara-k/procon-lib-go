@@ -5,7 +5,6 @@ import (
 )
 
 
-
 type Comparable interface {
 	less(Comparable) bool
 }
@@ -134,6 +133,7 @@ func (node *Node) show() {
 	node.right.show()
 }
 
+
 type Set struct {
 	root *Node
 }
@@ -150,7 +150,12 @@ func (set *Set) find(elem Comparable) *Node {
 
 func (set *Set) erase(elem Comparable) {
 	fmt.Println("Set::erase is called")
-	set.root.find(elem).erase()
+	node := set.root.find(elem)
+	if node == set.root {
+		set.root = nil
+	} else {
+		node.erase()
+	}
 }
 
 func (set *Set) begin() *Node {
@@ -178,22 +183,19 @@ func main() {
 	set.insert(Int(3))
 	set.show()
 
-	set.insert(Int(4))
+	set.erase(Int(3))
 	set.show()
 
-	set.insert(Int(2))
-	set.insert(Int(1))
+	for i := 0; i < 8; i++ {
+		set.insert(Int(i))
+	}
 	set.show()
 
 	fmt.Println(set.find(Int(2)))
-	fmt.Println(set.find(Int(5)))
-
-	set.erase(Int(2))
-	set.show()
+	fmt.Println(set.find(Int(10)))
 
 	for it := set.begin(); it != nil; it = it.next() {
 		fmt.Println(it.elem)
 	}
-
 }
 
