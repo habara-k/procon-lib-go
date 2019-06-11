@@ -56,7 +56,7 @@ func (l *Node) merge(r *Node) *Node {
 
 	l.update()
 	r.update()
-	if (l.pri > r.pri) {
+	if l.pri > r.pri {
 		l.rch = l.rch.merge(r)
 		return l.update()
 	} else {
