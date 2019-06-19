@@ -45,9 +45,6 @@ func (node *Node) update() *Node {
 }
 
 func (l *Node) merge(r *Node) *Node {
-	// fmt.Println("Node::merge is called")
-	// fmt.Println("Node::merge l:",l,", r:",r)
-	// fmt.Println()
 	if l == nil {
 		return r
 	} else if r == nil {
@@ -66,9 +63,6 @@ func (l *Node) merge(r *Node) *Node {
 }
 
 func (node *Node) split(elem elem_t, includeToRight bool) (*Node, *Node) {
-	// fmt.Println("Node::split is called")
-	// fmt.Println("Node::split node:",node,", elem:",elem)
-	// fmt.Println()
 	if node == nil {
 		return nil, nil
 	}
@@ -98,12 +92,8 @@ func (node *Node) split(elem elem_t, includeToRight bool) (*Node, *Node) {
 }
 
 func (node *Node) insert(elem elem_t) *Node {
-	// fmt.Println("Node::insert is called")
-	// fmt.Println("Node::insert elem:", elem)
-	// fmt.Println()
 	c, r := node.split(elem, false)
 	l, _ := c.split(elem, true)
-	// fmt.Println("Node::insert l:",l,", r:",r)
 	return l.merge(NewNode(elem).merge(r))
 }
 
@@ -145,17 +135,14 @@ func (treap *Treap) size() count_t {
 }
 
 func (treap *Treap) insert(elem elem_t) {
-	fmt.Println("Treap::insert is called")
 	treap.root = treap.root.insert(elem)
 }
 
 func (treap *Treap) erase(elem elem_t) {
-	fmt.Println("Treap::erase is called")
 	treap.root, _ = treap.root.erase(elem)
 }
 
 func (treap *Treap) find(elem elem_t) *Node {
-	fmt.Println("Treap::find is called")
 	return treap.root.find(elem)
 }
 
@@ -174,6 +161,9 @@ func (item Int) less(other Comparable) bool {
 }
 
 func main() {
+
+	// USAGE
+
 	rand.Seed(2)
 	treap := new(Treap)
 
